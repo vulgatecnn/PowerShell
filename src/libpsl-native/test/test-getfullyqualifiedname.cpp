@@ -23,8 +23,35 @@ TEST(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
     EXPECT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
 
     // Compare canonical name to FQDN
-    EXPECT_STREQ(info->ai_canonname, actual.c_str());
+    //EXPECT_STREQ(info->ai_canonname, actual.c_str());
+        char *info_a,*info_b;
+    info_a=(char *)malloc(sizeof(info->ai_canonname));
+    info_b=(char *)malloc(sizeof(actual.c_str()));
+    int i=0;
+    while(*(info->ai_canonname+i)!='\0'){
 
+        if(*(info->ai_canonname+i)<='Z' && ((*(info->ai_canonname+i)>='A')))
+            info_a[i]=*(info->ai_canonname+i)+'a'-'A';
+        else
+            info_a[i]=*(info->ai_canonname+i);
+        i++;
+    }
+    info_a[i]='\0';
+    i=0;
+    while(*(actual.c_str()+i)!='\0'){
+
+        if(*(actual.c_str()+i)<='Z' && ((*(actual.c_str()+i)>='A')))
+            info_b[i]=*(actual.c_str()+i)+'a'-'A';
+        else
+            info_b[i]=*(info->ai_canonname+i);
+        i++;
+    }
+    info_b[i]='\0';
+
+    EXPECT_STREQ(info_a, info_b);
+    
     freeaddrinfo(info);
+
+ 
 
 }
